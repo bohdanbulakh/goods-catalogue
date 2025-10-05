@@ -2,11 +2,12 @@ package org.example.goodscatalogue.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
 @AllArgsConstructor
-public class Product {
-    private Integer id;
+@EqualsAndHashCode(callSuper = true)
+public class Product extends Base {
     private String name;
     private String description;
     private Double price;
