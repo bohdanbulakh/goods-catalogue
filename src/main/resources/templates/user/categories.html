@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Admin - Categories</title></head>
+<body>
+<h2>Admin: Manage Categories</h2>
+
+<form th:action="@{/admin/categories}" method="post">
+    <input type="text" name="name" placeholder="Category name" required/>
+    <button type="submit">Add</button>
+</form>
+
+<ul>
+    <li th:each="c : ${categories}">
+        <span th:text="${c.name}"></span>
+        <form th:action="@{'/admin/categories/' + ${c.id} + '/delete'}" method="delete" style="display:inline">
+            <button type="submit">Delete</button>
+        </form>
+    </li>
+</ul>
+
+<a th:href="@{/}">Back</a>
+</body>
+</html>

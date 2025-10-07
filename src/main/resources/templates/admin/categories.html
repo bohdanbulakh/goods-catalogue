@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Admin - Categories</title></head>
+<body>
+<h2>Admin: Manage Categories</h2>
+<form th:action="@{/admin/categories}" method="post">
+    <input type="text" name="name" placeholder="Category name" />
+    <button type="submit">Add</button>
+</form>
+<ul>
+    <li th:each="c : ${categories}" th:text="${c.name}"></li>
+</ul>
+<a th:href="@{/}">Back</a>
+</body>
+</html>
