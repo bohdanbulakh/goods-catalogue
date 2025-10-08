@@ -12,7 +12,6 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    @Autowired
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
@@ -25,8 +24,8 @@ public class ProductService {
         return productRepository.findById(id);
     }
 
-    public Product create(Product product) {
-        return productRepository.create(product);
+    public void create(Product product) {
+        productRepository.create(product);
     }
 
     public Product update(Integer id, Product product) {

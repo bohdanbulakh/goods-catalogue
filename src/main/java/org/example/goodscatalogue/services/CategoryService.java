@@ -9,9 +9,11 @@ import java.util.List;
 
 @Service
 public class CategoryService {
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
+    public CategoryService(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
 
     public List<Category> getAll() {
         return categoryRepository.findAll();
@@ -21,8 +23,8 @@ public class CategoryService {
         return categoryRepository.findById(id);
     }
 
-    public Category create(Category category) {
-        return categoryRepository.create(category);
+    public void create(Category category) {
+        categoryRepository.create(category);
     }
 
     public Category update(Integer id, Category category) {
