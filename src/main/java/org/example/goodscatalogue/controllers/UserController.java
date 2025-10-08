@@ -13,7 +13,6 @@ public class UserController {
     private final CategoryService categoryService;
     private final ProductService productService;
 
-    @Autowired
     public UserController(CategoryService categoryService, ProductService productService) {
         this.categoryService = categoryService;
         this.productService = productService;

@@ -15,10 +15,13 @@ import java.util.ArrayList;
 @RequestMapping("/admin")
 public class AdminController {
 
-    @Autowired
-    private CategoryService categoryService;
-    @Autowired
-    private ProductService productService;
+    private final CategoryService categoryService;
+    private final ProductService productService;
+
+    public AdminController(CategoryService categoryService, ProductService productService) {
+        this.categoryService = categoryService;
+        this.productService = productService;
+    }
 
     @GetMapping
     public String adminHome() {
