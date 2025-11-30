@@ -1,15 +1,45 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head><title>Admin - Categories</title></head>
+<head>
+    <meta charset="UTF-8">
+    <title>Адмін - Категорії</title>
+</head>
 <body>
-<h2>Admin: Manage Categories</h2>
-<form th:action="@{/admin/categories}" method="post">
-    <input type="text" name="name" placeholder="Category name" />
-    <button type="submit">Add</button>
-</form>
-<ul>
-    <li th:each="c : ${categories}" th:text="${c.name}"></li>
-</ul>
-<a th:href="@{/}">Back</a>
+<nav>
+    <a href="/admin/categories">Управління категоріями</a> |
+    <a href="/admin/products">Управління товарами</a> |
+    <a href="/">На сайт</a>
+</nav>
+<hr>
+
+<h2>Список категорій</h2>
+<a href="/admin/categories/new">Додати нову категорію</a>
+<br><br>
+
+<table border="1" cellpadding="5">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Назва</th>
+        <th>Батьківська категорія</th>
+        <th>Дії</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="cat : ${categories}">
+        <td th:text="${cat.id}">1</td>
+        <td th:text="${cat.name}">Назва</td>
+        <td th:text="${cat.parent != null ? cat.parent.name : '-'}">-</td>
+        <td>
+            <a th:href="@{/admin/categories/{id}/edit(id=${cat.id})}">Редагувати</a>
+            <form th:action="@{/admin/categories/{id}/delete(id=${cat.id})}" method="post" style="display:inline;">
+                <button type="submit">Видалити</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<p>Час генерації сторінки (prototype bean): <span th:text="${timer}"></span></p>
 </body>
 </html>

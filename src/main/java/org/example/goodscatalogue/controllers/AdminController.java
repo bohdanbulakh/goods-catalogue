@@ -1,9 +1,11 @@
 package org.example.goodscatalogue.controllers;
 
+import org.example.goodscatalogue.components.RequestTimer;
 import org.example.goodscatalogue.models.Category;
 import org.example.goodscatalogue.models.Product;
 import org.example.goodscatalogue.services.CategoryService;
 import org.example.goodscatalogue.services.ProductService;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,27 +17,68 @@ import java.util.ArrayList;
 @RequestMapping("/admin")
 public class AdminController {
 
-    @Autowired
     private CategoryService categoryService;
-    @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ObjectFactory<RequestTimer> timerFactory;
+
+    @Autowired
+    public void setCategoryService(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
+
+    @Autowired
+    public AdminController(ProductService productService) {
+        this.productService = productService;
+    }
+
+    private void addCommonAttributes(Model model) {
+        model.addAttribute("timer", timerFactory.getObject().getTimestamp());
+    }
 
     @GetMapping
     public String adminHome() {
-        return "admin/categories";
+        return "redirect:/admin/categories";
     }
-
-    /* ---------- CATEGORY ---------- */
 
     @GetMapping("/categories")
     public String listCategories(Model model) {
         model.addAttribute("categories", categoryService.getAll());
+        addCommonAttributes(model);
         return "admin/categories";
     }
 
-    @PostMapping("/categories")
-    public String createCategory(@RequestParam String name) {
-        categoryService.create(new Category(name, null, new ArrayList<>()));
+    @GetMapping("/categories/new")
+    public String newCategoryForm(Model model) {
+        model.addAttribute("category", new Category(null, null, new ArrayList<>()));
+        model.addAttribute("categories", categoryService.getAll());
+        return "admin/category-edit";
+    }
+
+    @GetMapping("/categories/{id}/edit")
+    public String editCategoryForm(@PathVariable Integer id, Model model) {
+        model.addAttribute("category", categoryService.getById(id));
+        model.addAttribute("categories", categoryService.getAll());
+        return "admin/category-edit";
+    }
+
+    @PostMapping("/categories/save")
+    public String saveCategory(@ModelAttribute Category category,
+                               @RequestParam(required = false) Integer parentId) {
+        if (parentId != null) {
+            category.setParent(categoryService.getById(parentId));
+        } else {
+            category.setParent(null);
+        }
+
+        if (category.getId() == null) {
+            categoryService.create(category);
+        } else {
+            Category old = categoryService.getById(category.getId());
+            if (old != null) category.setProducts(old.getProducts());
+            categoryService.update(category.getId(), category);
+        }
         return "redirect:/admin/categories";
     }
 
@@ -45,19 +88,39 @@ public class AdminController {
         return "redirect:/admin/categories";
     }
 
-    /* ---------- PRODUCT ---------- */
-
     @GetMapping("/products")
     public String listProducts(Model model) {
         model.addAttribute("products", productService.getAll());
+        addCommonAttributes(model);
         return "admin/products";
     }
 
-    @PostMapping("/products")
-    public String createProduct(@RequestParam String name,
-                                @RequestParam String description,
-                                @RequestParam Double price) {
-        productService.create(new Product(name, description, price, null));
+    @GetMapping("/products/new")
+    public String newProductForm(Model model) {
+        model.addAttribute("product", new Product(null, null, null, null));
+        model.addAttribute("categories", categoryService.getAll());
+        return "admin/product-edit";
+    }
+
+    @GetMapping("/products/{id}/edit")
+    public String editProductForm(@PathVariable Integer id, Model model) {
+        model.addAttribute("product", productService.getById(id));
+        model.addAttribute("categories", categoryService.getAll());
+        return "admin/product-edit";
+    }
+
+    @PostMapping("/products/save")
+    public String saveProduct(@ModelAttribute Product product,
+                              @RequestParam(required = false) Integer categoryId) {
+        if (categoryId != null) {
+            product.setCategory(categoryService.getById(categoryId));
+        }
+
+        if (product.getId() == null) {
+            productService.create(product);
+        } else {
+            productService.update(product.getId(), product);
+        }
         return "redirect:/admin/products";
     }
 

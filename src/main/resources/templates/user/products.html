@@ -1,14 +1,37 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head><title>Products</title></head>
+<head>
+    <meta charset="UTF-8">
+    <title>Список товарів</title>
+</head>
 <body>
-<h2>Products</h2>
-<ul>
-    <li th:each="p : ${products}">
-        <span th:text="${p.name}"></span> -
-        <span th:text="${p.price}"></span>
-    </li>
-</ul>
-<a th:href="@{/}">Back</a>
+<nav>
+    <a href="/">Головна</a> |
+    <a href="/categories">Категорії</a> |
+    <a href="/products">Товари</a> |
+    <a href="/admin/products">Вхід для Адміністратора</a>
+</nav>
+<hr>
+
+<h1>Каталог товарів</h1>
+
+<table border="1" cellpadding="10">
+    <thead>
+    <tr>
+        <th>Назва</th>
+        <th>Опис</th>
+        <th>Ціна</th>
+        <th>Категорія</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="prod : ${products}">
+        <td th:text="${prod.name}">Назва</td>
+        <td th:text="${prod.description}">Опис</td>
+        <td th:text="${prod.price} + ' грн'">0.00</td>
+        <td th:text="${prod.category != null ? prod.category.name : 'Без категорії'}">Категорія</td>
+    </tr>
+    </tbody>
+</table>
 </body>
 </html>

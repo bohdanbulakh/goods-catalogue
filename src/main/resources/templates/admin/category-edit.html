@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Редагування категорії</title>
+</head>
+<body>
+<h2 th:text="${category.id == null ? 'Нова категорія' : 'Редагування категорії'}">Категорія</h2>
+
+<form action="/admin/categories/save" method="post" th:object="${category}">
+    <input type="hidden" th:field="*{id}">
+
+    <label>Назва категорії:</label><br>
+    <input type="text" th:field="*{name}" required><br><br>
+
+    <label>Батьківська категорія:</label><br>
+    <select name="parentId">
+        <option value="">-- Коренева категорія --</option>
+        <option th:each="cat : ${categories}"
+                th:value="${cat.id}"
+                th:text="${cat.name}"
+                th:selected="${category.parent != null && category.parent.id == cat.id}"
+                th:if="${category.id != cat.id}">
+        </option>
+    </select><br><br>
+
+    <button type="submit">Зберегти</button>
+    <a href="/admin/categories">Скасувати</a>
+</form>
+</body>
+</html>

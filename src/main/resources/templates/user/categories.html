@@ -1,23 +1,26 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head><title>Admin - Categories</title></head>
+<head>
+    <meta charset="UTF-8">
+    <title>Категорії</title>
+</head>
 <body>
-<h2>Admin: Manage Categories</h2>
+<nav>
+    <a href="/">Головна</a> |
+    <a href="/categories">Категорії</a> |
+    <a href="/products">Товари</a>
+</nav>
+<hr>
 
-<form th:action="@{/admin/categories}" method="post">
-    <input type="text" name="name" placeholder="Category name" required/>
-    <button type="submit">Add</button>
-</form>
+<h1>Категорії товарів</h1>
 
 <ul>
-    <li th:each="c : ${categories}">
-        <span th:text="${c.name}"></span>
-        <form th:action="@{'/admin/categories/' + ${c.id} + '/delete'}" method="delete" style="display:inline">
-            <button type="submit">Delete</button>
-        </form>
+    <li th:each="cat : ${categories}">
+        <strong th:text="${cat.name}">Назва</strong>
+        <span th:if="${cat.parent != null}">
+                (Батьківська категорія: <span th:text="${cat.parent.name}">Parent</span>)
+            </span>
     </li>
 </ul>
-
-<a th:href="@{/}">Back</a>
 </body>
 </html>
