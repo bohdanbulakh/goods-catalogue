@@ -1,47 +1,45 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Адмін - Товари</title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(~{::content})}">
 <body>
-<nav>
-    <a href="/admin/categories">Управління категоріями</a> |
-    <a href="/admin/products">Управління товарами</a> |
-    <a href="/">На сайт</a>
-</nav>
-<hr>
+<div th:fragment="content">
 
-<h2>Список товарів</h2>
-<a href="/admin/products/new">Додати новий товар</a>
-<br><br>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Управління товарами</h2>
+        <a href="/admin/products/new" class="btn btn-success">Додати новий товар</a>
+    </div>
 
-<table border="1" cellpadding="5">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Назва</th>
-        <th>Ціна</th>
-        <th>Категорія</th>
-        <th>Дії</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="p : ${products}">
-        <td th:text="${p.id}">1</td>
-        <td th:text="${p.name}">Назва</td>
-        <td th:text="${p.price}">100.00</td>
-        <td th:text="${p.category != null ? p.category.name : '-'}">-</td>
-        <td>
-            <a th:href="@{/admin/products/{id}/edit(id=${p.id})}">Редагувати</a>
-            <form th:action="@{/admin/products/{id}/delete(id=${p.id})}" method="post" style="display:inline;">
-                <button type="submit">Видалити</button>
-            </form>
-        </td>
-    </tr>
-    </tbody>
-</table>
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Назва</th>
+            <th>Ціна</th>
+            <th>Категорія</th>
+            <th>Дії</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${products}">
+            <td th:text="${p.id}">1</td>
+            <td th:text="${p.name}">Назва</td>
+            <td th:text="${p.price}">100.00</td>
+            <td th:text="${p.category != null ? p.category.name : '-'}">-</td>
+            <td>
+                <a th:href="@{/admin/products/{id}/edit(id=${p.id})}" class="btn btn-sm btn-primary">Редагувати</a>
 
-<p>Час генерації сторінки (prototype bean): <span th:text="${timer}"></span></p>
+                <form th:action="@{/admin/products/{id}/delete(id=${p.id})}" method="post" style="display:inline;"
+                      onsubmit="return confirm('Видалити цей товар?');">
+                    <button type="submit" class="btn btn-sm btn-danger">Видалити</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="alert alert-secondary mt-3">
+        Час генерації сторінки (prototype bean): <span th:text="${timer}"></span>
+    </div>
+</div>
 </body>
 </html>

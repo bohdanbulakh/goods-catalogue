@@ -1,12 +1,17 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Goods Catalogue</title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(~{::content})}">
 <body>
-<h1>Welcome to Goods Catalogue</h1>
-<a th:href="@{/categories}">View Categories</a> |
-<a th:href="@{/products}">View Products</a> |
-<a th:href="@{/admin/categories}">Admin Panel</a>
+<div th:fragment="content">
+    <div class="p-5 mb-4 bg-light rounded-3">
+        <div class="container-fluid py-5">
+            <h1 class="display-5 fw-bold">Welcome to Goods Catalogue</h1>
+            <hr class="my-4">
+            <p>Перейдіть до перегляду категорій або товарів, щоб почати роботу.</p>
+            <a class="btn btn-primary btn-lg" href="/categories" role="button">Переглянути категорії</a>
+            <a class="btn btn-secondary btn-lg" href="/products" role="button">Переглянути товари</a>
+        </div>
+    </div>
+</div>
 </body>
 </html>

@@ -1,37 +1,44 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Список товарів</title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(~{::content})}">
 <body>
-<nav>
-    <a href="/">Головна</a> |
-    <a href="/categories">Категорії</a> |
-    <a href="/products">Товари</a> |
-    <a href="/admin/products">Вхід для Адміністратора</a>
-</nav>
-<hr>
+<div th:fragment="content">
 
-<h1>Каталог товарів</h1>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Каталог товарів</h1>
+        <a href="/admin/products" class="btn btn-outline-primary">Вхід для Адміністратора</a>
+    </div>
 
-<table border="1" cellpadding="10">
-    <thead>
-    <tr>
-        <th>Назва</th>
-        <th>Опис</th>
-        <th>Ціна</th>
-        <th>Категорія</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="prod : ${products}">
-        <td th:text="${prod.name}">Назва</td>
-        <td th:text="${prod.description}">Опис</td>
-        <td th:text="${prod.price} + ' грн'">0.00</td>
-        <td th:text="${prod.category != null ? prod.category.name : 'Без категорії'}">Категорія</td>
-    </tr>
-    </tbody>
-</table>
+    <div th:if="${products.empty}" class="alert alert-warning">
+        Товарів поки немає.
+    </div>
+
+    <table class="table table-striped table-hover" th:unless="${products.empty}">
+        <thead class="table-dark">
+        <tr>
+            <th>Назва</th>
+            <th>Опис</th>
+            <th>Ціна</th>
+            <th>Категорія</th>
+            <th>Маркетинг (Switch)</th> </tr>
+        </thead>
+        <tbody>
+        <tr th:each="prod : ${products}">
+            <td th:text="${prod.name}">Назва</td>
+            <td th:text="${prod.description}">Опис</td>
+
+            <td th:text="${prod.price} + ' грн'">0.00</td>
+
+            <td th:text="${prod.category != null ? prod.category.name : 'Без категорії'}">Категорія</td>
+
+            <td th:switch="${true}">
+                <span th:case="${prod.price < 500}" class="badge bg-success">Бюджетний</span>
+                <span th:case="${prod.price > 5000}" class="badge bg-danger">Преміум</span>
+                <span th:case="*" class="badge bg-secondary">Стандарт</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 </body>
 </html>

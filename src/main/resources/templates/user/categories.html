@@ -1,26 +1,31 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Категорії</title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(~{::content})}">
 <body>
-<nav>
-    <a href="/">Головна</a> |
-    <a href="/categories">Категорії</a> |
-    <a href="/products">Товари</a>
-</nav>
-<hr>
+<div th:fragment="content">
 
-<h1>Категорії товарів</h1>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Категорії товарів</h1>
+        <a href="/admin/products" class="btn btn-outline-primary">Вхід для Адміністратора</a>
+    </div>
 
-<ul>
-    <li th:each="cat : ${categories}">
-        <strong th:text="${cat.name}">Назва</strong>
-        <span th:if="${cat.parent != null}">
+    <div th:if="${categories.empty}" class="alert alert-info">
+        Список категорій порожній.
+    </div>
+
+    <ul class="list-group" th:unless="${categories.empty}">
+        <li class="list-group-item" th:each="cat : ${categories}">
+            <strong th:text="${cat.name}">Назва</strong>
+
+            <span th:if="${cat.parent != null}" class="text-muted ms-2">
                 (Батьківська категорія: <span th:text="${cat.parent.name}">Parent</span>)
             </span>
-    </li>
-</ul>
+
+            <span th:unless="${cat.parent != null}" class="badge bg-primary ms-2">
+                Коренева категорія
+            </span>
+        </li>
+    </ul>
+</div>
 </body>
 </html>

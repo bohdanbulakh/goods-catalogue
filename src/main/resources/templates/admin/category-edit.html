@@ -1,31 +1,48 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Редагування категорії</title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(~{::content})}">
 <body>
-<h2 th:text="${category.id == null ? 'Нова категорія' : 'Редагування категорії'}">Категорія</h2>
+<div th:fragment="content">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h3 class="card-title mb-0"
+                        th:text="${category.id == null ? 'Нова категорія' : 'Редагування категорії'}">
+                        Категорія
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form action="/admin/categories/save" method="post" th:object="${category}">
+                        <input type="hidden" th:field="*{id}">
 
-<form action="/admin/categories/save" method="post" th:object="${category}">
-    <input type="hidden" th:field="*{id}">
+                        <div class="mb-3">
+                            <label class="form-label">Назва категорії:</label>
+                            <input type="text" th:field="*{name}" class="form-control" required>
+                        </div>
 
-    <label>Назва категорії:</label><br>
-    <input type="text" th:field="*{name}" required><br><br>
+                        <div class="mb-3">
+                            <label class="form-label">Батьківська категорія:</label>
+                            <select name="parentId" class="form-select">
+                                <option value="">-- Коренева категорія --</option>
+                                <option th:each="cat : ${categories}"
+                                        th:value="${cat.id}"
+                                        th:text="${cat.name}"
+                                        th:selected="${category.parent != null && category.parent.id == cat.id}"
+                                        th:if="${category.id != cat.id}">
+                                </option>
+                            </select>
+                        </div>
 
-    <label>Батьківська категорія:</label><br>
-    <select name="parentId">
-        <option value="">-- Коренева категорія --</option>
-        <option th:each="cat : ${categories}"
-                th:value="${cat.id}"
-                th:text="${cat.name}"
-                th:selected="${category.parent != null && category.parent.id == cat.id}"
-                th:if="${category.id != cat.id}">
-        </option>
-    </select><br><br>
-
-    <button type="submit">Зберегти</button>
-    <a href="/admin/categories">Скасувати</a>
-</form>
+                        <div class="d-flex justify-content-between">
+                            <a href="/admin/categories" class="btn btn-secondary">Скасувати</a>
+                            <button type="submit" class="btn btn-primary">Зберегти</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
