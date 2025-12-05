@@ -1,23 +1,43 @@
 package org.example.goodscatalogue.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.util.List;
 
+@Entity
+@Table(name = "categories")
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = false)
+@Builder
 @Schema(description = "Сутність категорії")
-public class Category extends Base {
+public class Category {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(nullable = false)
     @Schema(description = "Назва категорії", example = "Смартфони")
     private String name;
 
-    @Schema(description = "Батьківська категорія (якщо є)")
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    @Schema(description = "Батьківська категорія")
+    @JsonIgnore
+    @ToString.Exclude
     private Category parent;
 
-    @Schema(description = "Список товарів у цій категорії")
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    @JsonIgnore
+    @ToString.Exclude
+    private List<Category> subCategories;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @JsonIgnore
+    @ToString.Exclude
     private List<Product> products;
 }

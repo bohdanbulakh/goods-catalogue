@@ -11,25 +11,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 
-    private CategoryService categoryService;
-    private ProductService productService;
+    private final CategoryService categoryService;
+    private final ProductService productService;
 
     @Autowired
     private ObjectFactory<RequestTimer> timerFactory;
 
     @Autowired
-    public void setCategoryService(CategoryService categoryService) {
+    public AdminController(CategoryService categoryService, ProductService productService) {
         this.categoryService = categoryService;
-    }
-
-    @Autowired
-    public AdminController(ProductService productService) {
         this.productService = productService;
     }
 
@@ -51,7 +45,7 @@ public class AdminController {
 
     @GetMapping("/categories/new")
     public String newCategoryForm(Model model) {
-        model.addAttribute("category", new Category(null, null, new ArrayList<>()));
+        model.addAttribute("category", new Category());
         model.addAttribute("categories", categoryService.getAll());
         return "admin/category-edit";
     }
@@ -76,7 +70,10 @@ public class AdminController {
             categoryService.create(category);
         } else {
             Category old = categoryService.getById(category.getId());
-            if (old != null) category.setProducts(old.getProducts());
+            if (old != null) {
+                category.setProducts(old.getProducts());
+                category.setSubCategories(old.getSubCategories());
+            }
             categoryService.update(category.getId(), category);
         }
         return "redirect:/admin/categories";
@@ -97,7 +94,7 @@ public class AdminController {
 
     @GetMapping("/products/new")
     public String newProductForm(Model model) {
-        model.addAttribute("product", new Product(null, null, null, null));
+        model.addAttribute("product", new Product());
         model.addAttribute("categories", categoryService.getAll());
         return "admin/product-edit";
     }
@@ -114,6 +111,8 @@ public class AdminController {
                               @RequestParam(required = false) Integer categoryId) {
         if (categoryId != null) {
             product.setCategory(categoryService.getById(categoryId));
+        } else {
+            product.setCategory(null);
         }
 
         if (product.getId() == null) {

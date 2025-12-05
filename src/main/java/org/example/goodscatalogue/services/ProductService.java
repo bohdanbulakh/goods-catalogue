@@ -15,60 +15,43 @@ import java.util.stream.Collectors;
 @Service
 public class ProductService {
 
-    private final ProductRepository productRepository;
-
     @Autowired
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
+    private ProductRepository productRepository;
 
     public List<Product> getAll() {
         return productRepository.findAll();
     }
 
     public Product getById(Integer id) {
-        return productRepository.findById(id);
+        return productRepository.findById(id).orElse(null);
     }
 
     public Product create(Product product) {
-        return productRepository.create(product);
+        return productRepository.save(product);
     }
 
     @Transactional
     public Product update(Integer id, Product product) {
         product.setId(id);
-        return productRepository.updateById(id, product);
+        return productRepository.save(product);
     }
 
     public void deleteById(Integer id) {
         productRepository.deleteById(id);
     }
 
-    public void deleteAll() {
-        productRepository.findAll().forEach(p -> productRepository.deleteById(p.getId()));
-    }
-
     public List<Product> search(String query, Double minPrice, Double maxPrice, int page, int size) {
-        return productRepository.findAll().stream()
-                .filter(p -> query == null || p.getName().toLowerCase().contains(query.toLowerCase())
-                        || (p.getDescription() != null && p.getDescription().toLowerCase().contains(query.toLowerCase())))
-                .filter(p -> minPrice == null || p.getPrice() >= minPrice)
-                .filter(p -> maxPrice == null || p.getPrice() <= maxPrice)
+        List<Product> result = productRepository.searchProducts(query, minPrice, maxPrice);
+
+        return result.stream()
                 .skip((long) page * size)
                 .limit(size)
                 .collect(Collectors.toList());
     }
-    
-    public long count(String query, Double minPrice, Double maxPrice) {
-        return productRepository.findAll().stream()
-                .filter(p -> query == null || p.getName().toLowerCase().contains(query.toLowerCase()))
-                .filter(p -> minPrice == null || p.getPrice() >= minPrice)
-                .filter(p -> maxPrice == null || p.getPrice() <= maxPrice)
-                .count();
-    }
-    
+
+    @Transactional
     public Product patch(Integer id, Map<String, Object> fields) {
-        Product product = productRepository.findById(id);
+        Product product = productRepository.findById(id).orElse(null);
         if (product == null) return null;
 
         fields.forEach((key, value) -> {
@@ -79,6 +62,6 @@ public class ProductService {
             }
         });
 
-        return productRepository.updateById(id, product);
+        return productRepository.save(product);
     }
 }
