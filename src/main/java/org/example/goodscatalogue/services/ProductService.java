@@ -4,6 +4,7 @@ import org.example.goodscatalogue.models.Product;
 import org.example.goodscatalogue.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
@@ -33,7 +34,9 @@ public class ProductService {
         return productRepository.create(product);
     }
 
+    @Transactional
     public Product update(Integer id, Product product) {
+        product.setId(id);
         return productRepository.updateById(id, product);
     }
 
